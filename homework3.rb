@@ -1,9 +1,15 @@
 class Developer
+attr_reader :name, :task_list, :prof
 MAX_TASKS=10
+PROF = :developer
+TEAM = :developers
   def initialize(name)
     @name = name
-    @task_list = []    
+    @task_list = []
+    @prof = prof  
+    @team = team  
   end
+
 
   def status
     case 
@@ -38,6 +44,14 @@ MAX_TASKS=10
     end
   end
 
+  def prof
+    self.class::PROF
+  end
+
+  def team
+    self.class::TEAM
+  end
+
   def can_add_task?
     if @task_list.count >= MAX_TASKS
       false
@@ -57,8 +71,9 @@ end
 
 class JuniorDeveloper < Developer
   MAX_TASKS=5
-  
+  PROF = :junior
   def add_task(task)
+    
     raise(ArgumentError, 'Слишком много работы!') if @task_list.count >= MAX_TASKS
     raise(ArgumentError, 'Слишком сложно!') if task.size > 20
     @task_list << task
@@ -69,23 +84,41 @@ class JuniorDeveloper < Developer
     if @task_list.first == nil
       raise ArgumentError, "Нечего делать!"
     else
-      print "#{@name}: пытаюсь деелать задачу \"#{@task_list.first}\". "
+      print "#{@name}: пытаюсь делать задачу \"#{@task_list.first}\". "
       @task_list.delete_at(0)
       puts "Осталось задач: #{@task_list.count}"
+    end
+  end
+
+  def status
+    case 
+    when @task_list.count == 0
+      'свободен'
+    when @task_list.count > 0 && @task_list.count < MAX_TASKS
+      'работаю'
+    else
+      'занят'
+    end
+  end
+
+  def can_add_task?
+    if @task_list.count >= MAX_TASKS
+      false
+    else
+      true
     end
   end
 end
 
 
 class SeniorDeveloper < Developer
-  MAX_TASKS=15
 
+  MAX_TASKS=15
+  PROF = :senior
   def add_task(task)
-    raise(ArgumentError) if @task_list.count >= MAX_TASKS
+    raise(ArgumentError, 'Слишком много работы!') if @task_list.count >= MAX_TASKS
     @task_list << task
     puts "#{@name}: добавлена задача \"#{task}\". Всего в списке задач: #{@task_list.count}"
-    rescue ArgumentError
-    puts "Слишком много работы!"
   end
 
   def work!
@@ -103,42 +136,23 @@ class SeniorDeveloper < Developer
         puts "Что-то лень"
     end
   end
+
+  def status
+    case 
+    when @task_list.count == 0
+      'свободен'
+    when @task_list.count > 0 && @task_list.count < MAX_TASKS
+      'работаю'
+    else
+      'занят'
+    end
+  end
+
+  def can_add_task?
+    if @task_list.count >= MAX_TASKS
+      false
+    else
+      true
+    end
+  end
 end
-
-
-dev = Developer.new('Вася')
-jun = JuniorDeveloper.new('Вася')
-sen = SeniorDeveloper.new('Вася')
-sen.add_task('Передвинуть шкаф')
-#sen.add_task('Полить кактус')
-#sen.add_task('Попить кофе')
-#sen.add_task('Запрограммировать калькулятор')
-#sen.add_task('Попить чай')
-#sen.add_task('Дать задание джунам')
-#sen.add_task('Оформить отпуск')
-#sen.add_task('Дать задание тестировщикам')
-#sen.add_task('Запрограммировать калькулятор')
-#sen.add_task('Попить кофе')
-#sen.add_task('Попросить Васю полить кактус')
-dev.add_task('Попить кофе')
-dev.add_task('Полить кактус')
-dev.add_task('Попить кофе')
-dev.add_task('Полить кактус')
-#jun.add_task('Попить кофе')
-#jun.add_task('Попить кофе')
-#jun.add_task('Попить кофе')
-#jun.add_task('Попить кофе')
-#jun.add_task('Попить кофе')
-dev.tasks
-#sen.work!
-#sen.work!
-#sen.work!
-#sen.work!
-#sen.work!
-#sen.work!
-#jun.work!
-#puts dev.status
-#puts "Еще есть место для заданий" if dev.can_add_task? == true
-#puts "Слишком занят, задания не принимаю" if dev.can_add_task? == false
-#puts "Нет заданий" if dev.can_work? == false
-#jun.add_task('Попить кофе после длинного рабочего дня')
