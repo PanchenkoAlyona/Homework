@@ -3,6 +3,7 @@ class PetitionsController < ApplicationController
   before_filter :author, only: [:edit, :update]
 
   def index
+    @petitions = Petition.all
     if params[:my] && current_user
       @petitions = Petition.where(user_id: current_user.id).reverse
       @title = 'Мои петиции'
@@ -49,6 +50,12 @@ class PetitionsController < ApplicationController
     else
       render 'edit'
     end
+  end
+
+  def destroy
+      petition = current_user.petitions.find(params[:id])
+      petition.destroy
+      redirect_to action: :index, notice: 'Petission was deleted'
   end
 
   private

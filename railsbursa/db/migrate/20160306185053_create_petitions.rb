@@ -4,7 +4,6 @@ class CreatePetitions < ActiveRecord::Migration
       t.string :title
       t.string :text
       t.integer :user_id
-      #t.referances :user, index:true
       
       t.timestamps null: false
     end
